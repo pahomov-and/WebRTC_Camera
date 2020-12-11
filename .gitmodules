@@ -1,0 +1,3 @@
+[submodule "WebRTC_Camera_Native/civetweb"]
+	path = WebRTC_Camera_Native/civetweb
+	url = https://github.com/civetweb/civetweb.git
