@@ -72,7 +72,7 @@ do
 				exit 0
 			elif [[ $ARCH == "arm64" ]]; then
 				echo "ARCH: $ARCH"
-				exit 0
+				#exit 0
 				gn gen out/$ARCH/Release --args='is_chrome_branded=true use_rtti=true rtc_desktop_capture_supported=false target_cpu="arm64" is_debug=false symbol_level=2 use_custom_libcxx=false treat_warnings_as_errors=false rtc_use_h264=true ffmpeg_branding="Chrome" rtc_include_tests=false use_ozone=true rtc_include_pulse_audio=false '
 			fi
 

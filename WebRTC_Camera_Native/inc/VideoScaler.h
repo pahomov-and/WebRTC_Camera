@@ -13,6 +13,8 @@
 #include "api/media_stream_interface.h"
 #include "api/video/i420_buffer.h"
 
+#include "VideoScalerSetup.h"
+
 class VideoScaler :  public rtc::VideoSinkInterface<webrtc::VideoFrame>,  public rtc::VideoSourceInterface<webrtc::VideoFrame> 
 {
 public:
@@ -84,6 +86,15 @@ public:
 
     void OnFrame(const webrtc::VideoFrame &frame) override
     {
+//        std::cout <<  "frame.width(): " << frame.width() << " frame.height(): " << frame.height()<< std::endl;
+
+        ROI _roi = VideoScalerSetup::get()->GetCrop();
+
+        m_roi_width = _roi.roi_width;
+        m_roi_height = _roi.roi_height;
+        m_roi_x= _roi.roi_x;
+        m_roi_y = _roi.roi_y;
+
         if (m_roi_x >= frame.width())
         {
             RTC_LOG(LS_ERROR) << "The ROI position protrudes beyond the right edge of the image. Ignore roi_x.";

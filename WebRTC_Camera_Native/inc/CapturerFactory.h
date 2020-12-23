@@ -12,6 +12,7 @@
 #include <regex>
 
 #include "VcmCapturer.h"
+#include "FakeCapturer.h"
 
 #ifdef HAVE_LIVE555
 #include "rtspvideocapturer.h"
@@ -27,6 +28,7 @@
 #endif
 
 #include "pc/video_track_source.h"
+
 
 template<class T>
 class TrackSource : public webrtc::VideoTrackSource {
@@ -154,9 +156,19 @@ class CapturerFactory {
 			videoSource = TrackSource<WindowCapturer>::Create(videourl, opts);
 #endif	
 		}
-		else if (std::regex_match("videocap://",publishFilter)) {
+//		else if (std::regex_match("videocap://",publishFilter)) {
+		else if (videourl.find("videocap://") == 0) {
 			videoSource = TrackSource<VcmCapturer>::Create(videourl, opts);
 		}
+
+		else if (videourl.find("fake:") == 0)
+        {
+            std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!! FILE: " << __FILE__ << " LINE: " << __LINE__ << " videourl: " << videourl << std::endl;
+            videoSource = TrackSource<FakeCapturer>::Create(videourl, opts);
+        }
+
+
+        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!! FILE: " << __FILE__ << " LINE: " << __LINE__ << " videourl: " << videourl << std::endl;
 		return videoSource;
 	}
 

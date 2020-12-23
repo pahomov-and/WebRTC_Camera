@@ -301,6 +301,56 @@ PeerConnectionManager::PeerConnectionManager(const std::list<std::string> &iceSe
 		}
 		return answer;
 	};
+
+    m_func["/api/setROI"] = [this](const struct mg_request_info *req_info, const Json::Value &in) -> Json::Value {
+        std::string str_x;
+        std::string str_y;
+        std::string str_w;
+        std::string str_h;
+        Json::Value answer;
+
+
+        if (req_info->query_string)
+        {
+            frame_roi.roi_height=0;
+            frame_roi.roi_width=0;
+            frame_roi.roi_x=0;
+            frame_roi.roi_y=0;
+
+            CivetServer::getParam(req_info->query_string, "roi_x", str_x);
+            CivetServer::getParam(req_info->query_string, "roi_y", str_y);
+            CivetServer::getParam(req_info->query_string, "roi_width", str_w);
+            CivetServer::getParam(req_info->query_string, "roi_height", str_h);
+
+
+            if (!str_x.empty()) {
+                frame_roi.roi_x = atoi(str_x.c_str());
+                frame_roi.roi_x = frame_roi.roi_x <=0?0:frame_roi.roi_x;
+            }
+
+            if (!str_y.empty()) {
+                frame_roi.roi_y = atoi(str_y.c_str());
+                frame_roi.roi_y  = frame_roi.roi_y <=0?0:frame_roi.roi_y;
+            }
+            if (!str_w.empty()) {
+                frame_roi.roi_width = atoi(str_w.c_str());
+                frame_roi.roi_width = frame_roi.roi_width <=0?0:frame_roi.roi_width;
+            }
+            if (!str_h.empty()) {
+                frame_roi.roi_height = atoi(str_h.c_str());
+                frame_roi.roi_height = frame_roi.roi_height <=0?0:frame_roi.roi_height; }
+
+        }
+
+        VideoScalerSetup::get()->SetCrop(frame_roi);
+
+        answer["roi_x"] = frame_roi.roi_x;
+        answer["roi_y"] = frame_roi.roi_y;
+        answer["roi_width"] = frame_roi.roi_width;
+        answer["roi_height"] = frame_roi.roi_height;
+
+        return answer;
+    };
 }
 
 /* ---------------------------------------------------------------------------

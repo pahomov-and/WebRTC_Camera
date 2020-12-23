@@ -12,6 +12,8 @@
 #include "PeerConnectionManager.h"
 #include "HttpServerRequestHandler.h"
 
+//#include "opencv2/opencv.hpp"
+
 PeerConnectionManager* webRtcServer = NULL;
 
 void sighandler(int n)
@@ -23,8 +25,11 @@ void sighandler(int n)
     rtc::Thread::Current()->Quit();
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     std::cout << "Hello, World!" << std::endl;
+
+//    cv::Mat testMat;
+
     std::vector<std::string> options;
     const char *turnurl = "";
     const char *defaultlocalstunurl = "0.0.0.0:3478";
@@ -47,8 +52,8 @@ int main() {
 
     Json::Value config;
 
-//    std::ifstream stream("config.json");
-//    stream >> config;
+    std::ifstream stream("./config.json");
+    stream >> config;
 
     std::string httpAddress("0.0.0.0:");
     std::string httpPort = "8000";
@@ -75,8 +80,15 @@ int main() {
         iceServerList.push_back(std::string("turn:") + turnurl);
     }
 
-    webRtcServer = new PeerConnectionManager(iceServerList, config["urls"], audioLayer, publishFilter,
-                                             localWebrtcUdpPortRange);
+
+    std::list<std::string> urlList;
+    while (optind<argc)
+    {
+        urlList.push_back(argv[optind]);
+        optind++;
+    }
+
+    webRtcServer = new PeerConnectionManager(iceServerList, config["urls"], audioLayer, publishFilter, localWebrtcUdpPortRange);
     if (!webRtcServer->InitializePeerConnection()) {
         std::cout << "Cannot Initialize WebRTC server" << std::endl;
     } else {
